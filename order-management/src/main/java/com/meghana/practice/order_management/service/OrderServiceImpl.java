@@ -1,5 +1,6 @@
 package com.meghana.practice.order_management.service;
 
+import com.meghana.practice.order_management.exception.InvalidOrderException;
 import com.meghana.practice.order_management.exception.OrderNotFoundException;
 import com.meghana.practice.order_management.model.Order;
 import com.meghana.practice.order_management.model.OrderStatus;
@@ -19,7 +20,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrder(Order order) {
-
+        validateOrder(order);
         order.setOrderId(UUID.randomUUID().toString());
 
         order.setStatus(OrderStatus.CREATED);
@@ -37,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order updateOrder(String orderId, Order updatedOrder) {
-
+        validateOrder(updatedOrder);
         Order existingOrder = getOrder(orderId);
 
         existingOrder.setCustomerId(updatedOrder.getCustomerId());
@@ -61,5 +62,28 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getAllOrders() {
 
         return orderRepository.findAll();
+    }
+
+    private void validateOrder(Order order) {
+
+        if(order.getCustomerId() == null ||
+                order.getCustomerId().isBlank()) {
+            throw new InvalidOrderException("Customer ID is required");
+        }
+
+        if(order.getProductName() == null ||
+                order.getProductName().isBlank()) {
+            throw new InvalidOrderException("Product Name is required");
+        }
+
+        if(order.getQuantity() == null ||
+                order.getQuantity() <= 0) {
+            throw new InvalidOrderException("Quantity must be greater than 0");
+        }
+
+        if(order.getPrice() == null ||
+                order.getPrice() <= 0) {
+            throw new InvalidOrderException("Price must be greater than 0");
+        }
     }
 }
