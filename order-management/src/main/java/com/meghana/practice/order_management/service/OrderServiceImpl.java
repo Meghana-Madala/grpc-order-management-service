@@ -1,5 +1,6 @@
 package com.meghana.practice.order_management.service;
 
+import com.meghana.practice.order_management.exception.OrderNotFoundException;
 import com.meghana.practice.order_management.model.Order;
 import com.meghana.practice.order_management.model.OrderStatus;
 import com.meghana.practice.order_management.repository.OrderRepository;
@@ -31,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
 
         return orderRepository.findById(orderId)
                 .orElseThrow(() ->
-                        new RuntimeException("Order not found"));
+                        new OrderNotFoundException(orderId));
     }
 
     @Override
