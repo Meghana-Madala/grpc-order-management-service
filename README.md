@@ -91,9 +91,27 @@ Deletes an order by Order ID.
 
 You can test the service using tools such as:
 
-* BloomRPC
-* Postman (gRPC mode)
-* grpcurl
+## Standalone Client
+
+The project includes a menu-driven gRPC client that can be used to perform CRUD operations.
+
+Run the server:
+
+mvn spring-boot:run
+
+Then execute:
+
+OrderClient.java
+
+Available Operations:
+
+1. Create Order
+2. Get Order
+3. Update Order
+4. Delete Order
+5. Exit
+
+The client communicates with the gRPC server running on localhost:9090.
 
 Service Name:
 
