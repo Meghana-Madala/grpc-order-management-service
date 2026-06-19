@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 class OrderServiceImplTest {
 
     @Mock
-    private OrderRepository orderRepository;
+    private OrderRepository orderRepositoryMock;
 
     @InjectMocks
     private OrderServiceImpl orderService;
@@ -32,7 +32,7 @@ class OrderServiceImplTest {
                 .price(1200.0)
                 .build();
 
-        when(orderRepository.save(any(Order.class)))
+        when(orderRepositoryMock.save(any(Order.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         Order savedOrder = orderService.createOrder(order);
@@ -40,7 +40,7 @@ class OrderServiceImplTest {
         assertNotNull(savedOrder.getOrderId());
         assertEquals(OrderStatus.CREATED, savedOrder.getStatus());
 
-        verify(orderRepository, times(1))
+        verify(orderRepositoryMock, times(1))
                 .save(any(Order.class));
     }
 
@@ -58,7 +58,7 @@ class OrderServiceImplTest {
                 .status(OrderStatus.CREATED)
                 .build();
 
-        when(orderRepository.findById(orderId))
+        when(orderRepositoryMock.findById(orderId))
                 .thenReturn(java.util.Optional.of(order));
 
         Order result = orderService.getOrder(orderId);
@@ -66,7 +66,7 @@ class OrderServiceImplTest {
         assertNotNull(result);
         assertEquals(orderId, result.getOrderId());
 
-        verify(orderRepository, times(1))
+        verify(orderRepositoryMock, times(1))
                 .findById(orderId);
     }
 
@@ -92,10 +92,10 @@ class OrderServiceImplTest {
                 .status(OrderStatus.CONFIRMED)
                 .build();
 
-        when(orderRepository.findById(orderId))
+        when(orderRepositoryMock.findById(orderId))
                 .thenReturn(java.util.Optional.of(existingOrder));
 
-        when(orderRepository.save(any(Order.class)))
+        when(orderRepositoryMock.save(any(Order.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         Order result =
@@ -107,7 +107,7 @@ class OrderServiceImplTest {
         assertEquals(2500.0, result.getPrice());
         assertEquals(OrderStatus.CONFIRMED, result.getStatus());
 
-        verify(orderRepository, times(1))
+        verify(orderRepositoryMock, times(1))
                 .save(any(Order.class));
     }
 
@@ -125,12 +125,12 @@ class OrderServiceImplTest {
                 .status(OrderStatus.CREATED)
                 .build();
 
-        when(orderRepository.findById(orderId))
+        when(orderRepositoryMock.findById(orderId))
                 .thenReturn(java.util.Optional.of(order));
 
         orderService.deleteOrder(orderId);
 
-        verify(orderRepository, times(1))
+        verify(orderRepositoryMock, times(1))
                 .delete(order);
     }
 
@@ -139,14 +139,14 @@ class OrderServiceImplTest {
 
         String orderId = "999";
 
-        when(orderRepository.findById(orderId))
+        when(orderRepositoryMock.findById(orderId))
                 .thenReturn(java.util.Optional.empty());
 
         assertThrows(
                 OrderNotFoundException.class,
                 () -> orderService.getOrder(orderId));
 
-        verify(orderRepository, times(1))
+        verify(orderRepositoryMock, times(1))
                 .findById(orderId);
     }
 }
